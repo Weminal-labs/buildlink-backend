@@ -1,11 +1,16 @@
 import postRouter from "./routes/api";
-
+const cors = require('cors');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
+app.use(cors());
+
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 
 const options = {
   definition: {
