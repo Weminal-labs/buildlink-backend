@@ -6,10 +6,17 @@ const swaggerJsDoc = require('swagger-jsdoc');
 
 const app = express();
 const port = process.env.PORT || 3001;
-app.use(cors());
+
+const allowedOrigins = ['http://localhost:3000', 'https://buildlink.vercel.app'];
 
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
 }));
 
 const options = {
