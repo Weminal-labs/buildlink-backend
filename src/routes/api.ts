@@ -61,46 +61,30 @@ postRouter.use(bodyParser.json()); // to use body object in requests
  */
 
 postRouter.post("/", async (req, res) => {
-    const url = "http://3.107.186.138/answer";
-    const keywords = {
-        "LiNEAR": "https://linearprotocol.org",
+  const url = "http://3.107.186.138/answer";
+  try {
+    console.log(req.body);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req.body),
+    });
+
+    const data = await response.text();
+
+    const result = {
+      formattedText: data,
+      keywords: [],
     };
-    try {
-        console.log(req.body);
 
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(req.body),
-        });
-
-        const data = await response.text();
-        function formatMarkdown(response, keywords) {
-            const foundKeywords = [];
-        
-            for (let key in keywords) {
-                const regex = new RegExp(`\\b${key}\\b`, 'gi');
-                if (regex.test(response)) {
-                    foundKeywords.push({
-                        keyword: key,
-                        link: keywords[key] 
-                    });
-                    response = response.replace(regex, `[${key}](${keywords[key]})`); 
-                }
-            }
-        
-            return {
-                formattedText: response,
-                keywords: foundKeywords 
-            };
-        }        
-        res.send(JSON.stringify(formatMarkdown(data, keywords), null, 2));
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).send("An error occurred.");
-    }
+    res.send(result);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).send("An error occurred.");
+  }
 });
 
 /**
